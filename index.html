@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Respositories</title>
+		<link rel="icon" href="favicon.ico" type="image/x-icon" />
+		<link rel="apple-touch-icon" href="favicon.ico" />
+		<link rel="apple-touch-icon-precomposed" href="favicon.ico" />
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+		<meta name="viewport" content="user-scalable=no, width=device-width" />
+		<meta name="viewport" content="minimum-scale=1.0,width=device-width,maximum-scale=1,user-scalable=no" />
+		<style>
+			body {font-family:arial;margin:10px;padding:0;background-color:rgb(250,250,250)}
+			h1 {margin:0;padding:0;}
+			span {color:darkgrey}
+			div {width:1000px;margin:0 auto;}
+			dl {cursor:pointer;border:solid 1px red;padding:10px;background-color:white;border:solid 1px rgba(0, 0, 0, 0.15); border-radius:10px; box-shadow:rgba(0, 0, 0, 0.06) 0px 2px 3px 0px;}
+			dt {font-weight:bolder;font-size:24px;}
+			dd {margin:0}
+			span {color:grey}
+			@media (max-width: 1024px) {
+				div {width:100%}
+			}
+			@media (prefers-color-scheme: dark) {
+				body, h1 {color:#BCBDC0}
+				body {background-color:#1E1F23;}
+				dl {background-color:#333437;}
+			}
+		</style>
+	</head>
+	<body>
+		<div></div>
+		<script>
+			var github = 'https://api.github.com/users/starfid/repos?sort=updated_at&order=desc',
+				rows, init = () => {
+				const xhr = new XMLHttpRequest();
+				xhr.open('GET', github);
+				xhr.responseType = 'json';
+				xhr.onload = function(e) {
+					if (this.status == 200) {
+						rows = this.response;
+						parsing();
+					}
+				};
+				xhr.send();
+			},
+			humanDate = (text) => {
+				return new Date(text).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+			},
+			parsing = () => {
+				var tmp = "";
+				tmp += "<h1>"+rows[0].owner.login+"</h1>";
+				tmp += "<span>Development tools and companion for IOT applications</span>";
+				for(i in rows){
+					let row = rows[i];
+					if(row.name.indexOf('.github.io')>0) continue;
+					tmp += "<dl onclick=\"document.location = '"+row.homepage+"'\">";
+						tmp += "<dt>"+row.name+"</dt>";
+						tmp += "<dd>";
+							tmp += row.description+"<span><br />";
+							tmp += "Created " + humanDate(row.created_at) +"<br />";
+							tmp += "Last updated " + humanDate(row.updated_at)+"</span><br />";
+						tmp += "</dd>";
+					tmp += "</dl>";
+				}
+				document.getElementsByTagName("div")[0].innerHTML = tmp;
+			}
+			init();
+		</script>
